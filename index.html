@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Alien Invaders</title>
+		<link rel="stylesheet" href="css/styles.css" />
+	</head>
+	<body>
+		<div id="game-container">
+			<canvas id="gameCanvas"></canvas>
+			<div id="score-container">
+				<h2>Score: <span id="score">0</span></h2>
+			</div>
+			<div id="game-over" class="hidden">
+				<h1>Game Over!</h1>
+				<button id="restart-btn">Restart</button>
+			</div>
+		</div>
+
+		<script src="js/game.js"></script>
+	</body>
+</html>
