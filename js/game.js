@@ -12,7 +12,11 @@ const PLAYER_SCALE = 0.05
 
 class Player {
 	constructor() {
-		this.velocity = { x: 0, y: 0 }
+		this.velocity = {
+			x: 0,
+			y: 0,
+		}
+
 		this.rotation = 0
 		this.position = { x: canvas.width / 2, y: canvas.height }
 		this.loadImage()
@@ -83,8 +87,53 @@ class Projectile {
 	}
 }
 
+class Invader {
+	constructor() {
+		this.velocity = {
+			x: 0,
+			y: 0,
+		}
+		this.position = { x: canvas.width / 2, y: canvas.height }
+		this.loadImage()
+	}
+
+	loadImage() {
+		const image = new Image()
+		image.src = '../assets/alien1.png'
+		image.onload = () => {
+			const scale = 0.07
+			this.image = image
+			this.width = image.width * scale
+			this.height = image.height * scale
+			this.position = {
+				x: canvas.width / 2 - this.width / 2,
+				y: canvas.height / 2,
+			}
+		}
+	}
+
+	draw() {
+		ctx.drawImage(
+			this.image,
+			this.position.x,
+			this.position.y,
+			this.width,
+			this.height
+		)
+	}
+
+	update() {
+		if (this.image) {
+			this.draw()
+			this.position.x += this.velocity.x
+			this.position.y += this.velocity.y
+		}
+	}
+}
+
 const player = new Player()
 const projectiles = []
+const invader = new Invader()
 const keys = {
 	ArrowLeft: false,
 	ArrowRight: false,
@@ -122,6 +171,7 @@ function animate() {
 	ctx.fillStyle = 'black'
 	ctx.fillRect(0, 0, canvas.width, canvas.height)
 
+	invader.update()
 	player.update()
 	handleProjectiles()
 	handlePlayerMovement()
