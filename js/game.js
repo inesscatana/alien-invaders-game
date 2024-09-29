@@ -180,13 +180,16 @@ class Grid {
 
 const player = new Player()
 const projectiles = []
-const grids = [new Grid()]
+const grids = []
 
 const keys = {
 	ArrowLeft: false,
 	ArrowRight: false,
 	space: false,
 }
+
+let frames = 0
+let randomInterval = Math.floor(Math.random() * 500 + 500)
 
 function handleProjectiles() {
 	projectiles.forEach((projectile, index) => {
@@ -230,6 +233,16 @@ function animate() {
 	})
 
 	handlePlayerMovement()
+
+	// spawning enemies
+	if (frames % randomInterval === 0) {
+		grids.push(new Grid())
+		randomInterval = Math.floor(Math.random() * 500 + 500)
+		frames = 0
+		console.log(randomInterval)
+	}
+
+	frames++
 }
 
 animate()
