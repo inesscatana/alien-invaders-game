@@ -1,9 +1,10 @@
 const scoreEl = document.getElementById('score')
+
 const canvas = document.getElementById('game-canvas')
 const ctx = canvas.getContext('2d')
 
-canvas.width = innerWidth
-canvas.height = innerHeight
+canvas.width = 1024
+canvas.height = 576
 
 const SHOOT_SOUND = new Audio('../assets/sounds/shoot.wav')
 const PLAYER_HIT_INVADER_SOUND = new Audio('../assets/sounds/alien-death.wav')
