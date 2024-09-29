@@ -12,7 +12,7 @@ const INVADER_HIT_PLAYER_SOUND = new Audio('../assets/sounds/player-death.wav')
 const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
 const PROJECTILE_SPEED = -10
-const PLAYER_SCALE = 0.05
+const PLAYER_SCALE = 0.07
 
 class Player {
 	constructor() {
@@ -36,7 +36,7 @@ class Player {
 			this.height = image.height * PLAYER_SCALE
 			this.position = {
 				x: canvas.width / 2 - this.width / 2,
-				y: canvas.height - this.height,
+				y: canvas.height - this.height - 10,
 			}
 		}
 	}
@@ -273,6 +273,8 @@ let game = {
 	active: true,
 }
 let score = 0
+let canShoot = true
+const shootCooldown = 500 // Time in milliseconds
 
 for (let i = 0; i < 100; i++) {
 	particles.push(
@@ -291,8 +293,8 @@ for (let i = 0; i < 100; i++) {
 	)
 }
 
-function createParticles({ object, color, fades }) {
-	for (let i = 0; i < 15; i++) {
+function createParticles({ object, color, fades, particleCount = 15 }) {
+	for (let i = 0; i < particleCount; i++) {
 		particles.push(
 			new Particle({
 				position: {
@@ -434,7 +436,7 @@ function animate() {
 						)
 
 						// remove invader and projectile
-						if (invaderFound && projectileFound) {
+						if (!game.over && invaderFound && projectileFound) {
 							score += 100
 							scoreEl.innerHTML = `Score: ${score}`
 
@@ -495,6 +497,8 @@ function handleKeyDown(key) {
 		case ' ':
 			if (keys.space) return
 			keys.space = true
+			canShoot = false // Prevents rapid shooting
+
 			projectiles.push(
 				new Projectile({
 					position: {
@@ -508,6 +512,12 @@ function handleKeyDown(key) {
 				})
 			)
 			SHOOT_SOUND.play()
+
+			// Allow shooting after a cooldown
+			setTimeout(() => {
+				canShoot = true
+			}, shootCooldown)
+
 			break
 	}
 }
