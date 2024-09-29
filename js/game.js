@@ -7,8 +7,17 @@ canvas.width = 1024
 canvas.height = 576
 
 const SHOOT_SOUND = new Audio('../assets/sounds/shoot.wav')
+SHOOT_SOUND.volume = 0.4
+
 const PLAYER_HIT_INVADER_SOUND = new Audio('../assets/sounds/alien-death.wav')
+PLAYER_HIT_INVADER_SOUND.volume = 0.4
+
 const INVADER_HIT_PLAYER_SOUND = new Audio('../assets/sounds/player-death.wav')
+INVADER_HIT_PLAYER_SOUND.volume = 0.5
+
+const INVADER_SHOOT_SOUND = new Audio('../assets/sounds/alien-shoot.wav')
+INVADER_SHOOT_SOUND.volume = 0.2
+
 const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
 const PROJECTILE_SPEED = -10
@@ -205,6 +214,9 @@ class Invader {
 				},
 			})
 		)
+
+		// Play invader shooting sound
+		INVADER_SHOOT_SOUND.play()
 	}
 }
 
