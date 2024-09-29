@@ -225,7 +225,7 @@ function animate() {
 	player.update()
 	handleProjectiles()
 
-	grids.forEach((grid) => {
+	grids.forEach((grid, gridIndex) => {
 		grid.update()
 		grid.invaders.forEach((invader, i) => {
 			invader.update({ velocity: grid.velocity })
@@ -248,9 +248,23 @@ function animate() {
 							(projectile2) => projectile2 === projectile
 						)
 
+						// remove invader and projectile
 						if (invaderFound && projectileFound) {
 							grid.invaders.splice(i, 1)
 							projectiles.splice(j, 1)
+
+							if (grid.invaders.length > 0) {
+								const firstInvader = grid.invaders[0]
+								const lastInvader = grid.invaders[grid.invaders.length - 1]
+
+								grid.width =
+									lastInvader.position.x -
+									firstInvader.position.x +
+									lastInvader.width
+								grid.position.x = firstInvader.position.x
+							} else {
+								grids.splice(gridIndex, 1)
+							}
 						}
 					}, 0)
 				}
