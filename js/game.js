@@ -1,3 +1,4 @@
+const scoreEl = document.getElementById('score')
 const canvas = document.getElementById('game-canvas')
 const ctx = canvas.getContext('2d')
 
@@ -270,6 +271,7 @@ let game = {
 	over: false,
 	active: true,
 }
+let score = 0
 
 for (let i = 0; i < 100; i++) {
 	particles.push(
@@ -432,6 +434,9 @@ function animate() {
 
 						// remove invader and projectile
 						if (invaderFound && projectileFound) {
+							score += 100
+							scoreEl.innerHTML = `Score: ${score}`
+
 							// Play sound effect for player hitting invader
 							PLAYER_HIT_INVADER_SOUND.play()
 
