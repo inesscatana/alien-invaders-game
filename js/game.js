@@ -5,6 +5,8 @@ canvas.width = innerWidth
 canvas.height = innerHeight
 
 const SHOOT_SOUND = new Audio('../assets/sounds/shoot.wav')
+const PLAYER_HIT_INVADER_SOUND = new Audio('../assets/sounds/alien-death.wav')
+const INVADER_HIT_PLAYER_SOUND = new Audio('../assets/sounds/player-death.wav')
 const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
 const PROJECTILE_SPEED = -10
@@ -84,6 +86,36 @@ class Projectile {
 		this.draw()
 		this.position.x += this.velocity.x
 		this.position.y += this.velocity.y
+	}
+}
+
+class Particle {
+	constructor({ position, velocity, radius, color }) {
+		this.position = position
+		this.velocity = velocity
+
+		this.radius = radius
+		this.color = color
+		this.opacity = 1
+	}
+
+	draw() {
+		ctx.save()
+		ctx.globalAlpha = this.opacity
+		ctx.beginPath()
+		ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+		ctx.fillStyle = this.color
+		ctx.fill()
+		ctx.closePath()
+		ctx.restore()
+	}
+
+	update() {
+		this.draw()
+		this.position.x += this.velocity.x
+		this.position.y += this.velocity.y
+
+		this.opacity -= 0.01
 	}
 }
 
@@ -218,6 +250,7 @@ const player = new Player()
 const projectiles = []
 const grids = []
 const invaderProjectiles = []
+const particles = []
 
 const keys = {
 	ArrowLeft: false,
@@ -227,6 +260,25 @@ const keys = {
 
 let frames = 0
 let randomInterval = Math.floor(Math.random() * 500 + 500)
+
+function createParticles({ object, color }) {
+	for (let i = 0; i < 15; i++) {
+		particles.push(
+			new Particle({
+				position: {
+					x: object.position.x + object.width / 2,
+					y: object.position.y + object.height / 2,
+				},
+				velocity: {
+					x: (Math.random() - 0.5) * 2,
+					y: Math.random() - 0.5,
+				},
+				radius: Math.random() * 3,
+				color: color || '#BAA0DE',
+			})
+		)
+	}
+}
 
 function handleProjectiles() {
 	projectiles.forEach((projectile, index) => {
@@ -261,6 +313,16 @@ function animate() {
 
 	player.update()
 
+	particles.forEach((particle, i) => {
+		if (particle.opacity <= 0) {
+			setTimeout(() => {
+				particles.splice(i, 1)
+			}, 0)
+		} else {
+			particle.update()
+		}
+	})
+
 	invaderProjectiles.forEach((invaderProjectile, index) => {
 		if (
 			invaderProjectile.position.y + invaderProjectile.height >=
@@ -271,6 +333,7 @@ function animate() {
 			}, 0)
 		} else invaderProjectile.update()
 
+		// projectile hits player
 		if (
 			invaderProjectile.position.y + invaderProjectile.height >=
 				player.position.y &&
@@ -278,7 +341,17 @@ function animate() {
 				player.position.x &&
 			invaderProjectile.position.x <= player.position.x + player.width
 		) {
-			console.log('you lose')
+			setTimeout(() => {
+				invaderProjectiles.splice(index, 1)
+			}, 0)
+
+			// Play sound effect for invader hitting the player
+			INVADER_HIT_PLAYER_SOUND.play()
+
+			createParticles({
+				object: player,
+				color: 'white',
+			})
 		}
 	})
 
@@ -297,6 +370,7 @@ function animate() {
 		grid.invaders.forEach((invader, i) => {
 			invader.update({ velocity: grid.velocity })
 
+			// projectiles hit enemy
 			projectiles.forEach((projectile, j) => {
 				if (
 					projectile.position.y - projectile.radius <=
@@ -317,6 +391,13 @@ function animate() {
 
 						// remove invader and projectile
 						if (invaderFound && projectileFound) {
+							// Play sound effect for player hitting invader
+							PLAYER_HIT_INVADER_SOUND.play()
+
+							createParticles({
+								object: invader,
+							})
+
 							grid.invaders.splice(i, 1)
 							projectiles.splice(j, 1)
 
@@ -365,16 +446,16 @@ function handleKeyDown(key) {
 			if (keys.space) return
 			keys.space = true
 			projectiles.push(
-				new Projectile(
-					{
+				new Projectile({
+					position: {
 						x: player.position.x + player.width / 2,
 						y: player.position.y,
 					},
-					{
+					velocity: {
 						x: 0,
 						y: PROJECTILE_SPEED,
-					}
-				)
+					},
+				})
 			)
 			SHOOT_SOUND.play()
 			break
