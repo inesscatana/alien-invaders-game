@@ -20,6 +20,7 @@ class Player {
 		}
 
 		this.rotation = 0
+		this.opacity = 1
 		this.position = { x: canvas.width / 2, y: canvas.height }
 		this.loadImage()
 	}
@@ -40,11 +41,15 @@ class Player {
 
 	draw() {
 		ctx.save()
+
+		ctx.globalAlpha = this.opacity
+
 		ctx.translate(
 			this.position.x + this.width / 2,
 			this.position.y + this.height / 2
 		)
 		ctx.rotate(this.rotation)
+
 		ctx.translate(
 			-this.position.x - this.width / 2,
 			-this.position.y - this.height / 2
@@ -261,6 +266,10 @@ const keys = {
 
 let frames = 0
 let randomInterval = Math.floor(Math.random() * 500 + 500)
+let game = {
+	over: false,
+	active: true,
+}
 
 for (let i = 0; i < 100; i++) {
 	particles.push(
@@ -326,6 +335,7 @@ function handlePlayerMovement() {
 }
 
 function animate() {
+	if (!game.active) return
 	requestAnimationFrame(animate)
 	ctx.fillStyle = 'black'
 	ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -367,7 +377,13 @@ function animate() {
 		) {
 			setTimeout(() => {
 				invaderProjectiles.splice(index, 1)
+				player.opacity = 0
+				game.over = true
 			}, 0)
+
+			setTimeout(() => {
+				game.active = false
+			}, 2000)
 
 			// Play sound effect for invader hitting the player
 			INVADER_HIT_PLAYER_SOUND.play()
@@ -461,6 +477,8 @@ function animate() {
 animate()
 
 function handleKeyDown(key) {
+	if (game.over) return
+
 	switch (key) {
 		case 'ArrowLeft':
 			keys.ArrowLeft = true
