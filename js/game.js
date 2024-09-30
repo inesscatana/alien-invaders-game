@@ -369,7 +369,40 @@ function updateLivesDisplay() {
 	}
 }
 
+async function getHighScore() {
+	try {
+		const response = await fetch('http://localhost:3000/highscore')
+		const data = await response.json()
+		return data.score
+	} catch (error) {
+		console.error('Erro ao obter o high score:', error)
+	}
+}
+
+async function saveHighScore(score) {
+	try {
+		await fetch('http://localhost:3000/highscore', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ score }),
+		})
+	} catch (error) {
+		console.error('Erro ao salvar o high score:', error)
+	}
+}
+
+async function checkHighScore() {
+	const highScore = await getHighScore()
+	if (score > highScore) {
+		await saveHighScore(score)
+		alert('Novo high score!')
+	}
+}
+
 function showGameOverScreen() {
+	checkHighScore()
 	const gameScreen = document.getElementById('game-screen')
 	const gameOverScreen = document.getElementById('game-over-screen')
 	const finalScoreEl = document.getElementById('final-score')
@@ -380,10 +413,7 @@ function showGameOverScreen() {
 	finalScoreEl.textContent = `Final Score: ${score}`
 
 	const highScore = localStorage.getItem('highScore') || 0
-	if (score > highScore) {
-		localStorage.setItem('highScore', score)
-	}
-	highScoreEl.textContent = `High Score: ${localStorage.getItem('highScore')}`
+	highScoreEl.textContent = `High Score: ${highScore}`
 
 	GAME_OVER_MUSIC.play()
 }
