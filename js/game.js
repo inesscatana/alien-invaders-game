@@ -1,7 +1,9 @@
-const scoreEl = document.getElementById('score')
-
 const canvas = document.getElementById('game-canvas')
 const ctx = canvas.getContext('2d')
+
+const scoreEl = document.getElementById('score')
+const livesEl = document.getElementById('lives')
+const restartButton = document.getElementById('restart-button')
 
 canvas.width = 1024
 canvas.height = 576
@@ -15,8 +17,8 @@ PLAYER_HIT_INVADER_SOUND.volume = 0.4
 const INVADER_HIT_PLAYER_SOUND = new Audio('../assets/sounds/player-death.wav')
 INVADER_HIT_PLAYER_SOUND.volume = 0.5
 
-const INVADER_SHOOT_SOUND = new Audio('../assets/sounds/alien-shoot.wav')
-INVADER_SHOOT_SOUND.volume = 0.2
+const GAME_OVER_MUSIC = new Audio('../assets/sounds/game-over.mp3')
+GAME_OVER_MUSIC.volume = 0.7
 
 const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
@@ -214,9 +216,6 @@ class Invader {
 				},
 			})
 		)
-
-		// Play invader shooting sound
-		INVADER_SHOOT_SOUND.play()
 	}
 }
 
@@ -287,6 +286,7 @@ let game = {
 let score = 0
 let canShoot = true
 const shootCooldown = 500 // Time in milliseconds
+let lives = 3
 
 for (let i = 0; i < 100; i++) {
 	particles.push(
@@ -351,6 +351,32 @@ function handlePlayerMovement() {
 	}
 }
 
+function updateLivesDisplay() {
+	const lifeImages = livesEl.querySelectorAll('.life')
+	lifeImages.forEach((life, index) => {
+		life.style.display = index < lives ? 'inline' : 'none'
+	})
+}
+
+function showGameOverScreen() {
+	const gameScreen = document.getElementById('game-screen')
+	const gameOverScreen = document.getElementById('game-over-screen')
+	const finalScoreEl = document.getElementById('final-score')
+	const highScoreEl = document.getElementById('high-score')
+
+	gameScreen.style.display = 'none'
+	gameOverScreen.style.display = 'block'
+	finalScoreEl.textContent = `Final Score: ${score}`
+
+	const highScore = localStorage.getItem('highScore') || 0
+	if (score > highScore) {
+		localStorage.setItem('highScore', score)
+	}
+	highScoreEl.textContent = `High Score: ${localStorage.getItem('highScore')}`
+
+	GAME_OVER_MUSIC.play()
+}
+
 function animate() {
 	if (!game.active) return
 	requestAnimationFrame(animate)
@@ -384,7 +410,7 @@ function animate() {
 			}, 0)
 		} else invaderProjectile.update()
 
-		// projectile hits player
+		// Projectile hits player
 		if (
 			invaderProjectile.position.y + invaderProjectile.height >=
 				player.position.y &&
@@ -392,24 +418,26 @@ function animate() {
 				player.position.x &&
 			invaderProjectile.position.x <= player.position.x + player.width
 		) {
-			setTimeout(() => {
-				invaderProjectiles.splice(index, 1)
-				player.opacity = 0
-				game.over = true
-			}, 0)
-
-			setTimeout(() => {
-				game.active = false
-			}, 2000)
+			invaderProjectiles.splice(index, 1)
+			lives -= 1
+			updateLivesDisplay()
 
 			// Play sound effect for invader hitting the player
 			INVADER_HIT_PLAYER_SOUND.play()
-
 			createParticles({
 				object: player,
 				color: 'white',
 				fades: true,
 			})
+
+			if (lives <= 0) {
+				player.opacity = 0
+				game.over = true
+				setTimeout(() => {
+					game.active = false
+					showGameOverScreen()
+				}, 1000)
+			}
 		}
 	})
 
@@ -418,7 +446,7 @@ function animate() {
 	grids.forEach((grid, gridIndex) => {
 		grid.update()
 
-		// spawning projectiles
+		// Spawning projectiles
 		if (frames % 100 === 0 && grid.invaders.length > 0) {
 			grid.invaders[Math.floor(Math.random() * grid.invaders.length)].shoot(
 				invaderProjectiles
@@ -428,7 +456,7 @@ function animate() {
 		grid.invaders.forEach((invader, i) => {
 			invader.update({ velocity: grid.velocity })
 
-			// projectiles hit enemy
+			// Projectiles hit enemy
 			projectiles.forEach((projectile, j) => {
 				if (
 					projectile.position.y - projectile.radius <=
@@ -447,7 +475,7 @@ function animate() {
 							(projectile2) => projectile2 === projectile
 						)
 
-						// remove invader and projectile
+						// Remove invader and projectile
 						if (!game.over && invaderFound && projectileFound) {
 							score += 100
 							scoreEl.innerHTML = `Score: ${score}`
@@ -484,7 +512,7 @@ function animate() {
 
 	handlePlayerMovement()
 
-	// spawning enemies
+	// Spawning enemies
 	if (frames % randomInterval === 0) {
 		grids.push(new Grid())
 		randomInterval = Math.floor(Math.random() * 500 + 500)
@@ -550,3 +578,28 @@ function handleKeyUp(key) {
 
 addEventListener('keydown', (event) => handleKeyDown(event.key))
 addEventListener('keyup', (event) => handleKeyUp(event.key))
+
+restartButton.addEventListener('click', restartGame)
+function restartGame() {
+	lives = 3
+	score = 0
+	player.opacity = 1
+	game.over = false
+	game.active = true
+	updateLivesDisplay()
+
+	projectiles.length = 0
+	invaderProjectiles.length = 0
+	grids.length = 0
+	particles.length = 0
+
+	const gameOverScreen = document.getElementById('game-over-screen')
+	const gameScreen = document.getElementById('game-screen')
+	gameOverScreen.style.display = 'none'
+	gameScreen.style.display = 'block'
+
+	GAME_OVER_MUSIC.pause()
+	GAME_OVER_MUSIC.currentTime = 0
+
+	animate()
+}
