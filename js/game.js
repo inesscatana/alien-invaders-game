@@ -583,15 +583,16 @@ restartButton.addEventListener('click', restartGame)
 function restartGame() {
 	lives = 3
 	score = 0
+	scoreEl.innerHTML = `Score: ${score}`
 	player.opacity = 1
 	game.over = false
 	game.active = true
 	updateLivesDisplay()
 
-	projectiles.length = 0
-	invaderProjectiles.length = 0
-	grids.length = 0
-	particles.length = 0
+	player.position = {
+		x: canvas.width / 2 - player.width / 2,
+		y: canvas.height - player.height - 10,
+	}
 
 	const gameOverScreen = document.getElementById('game-over-screen')
 	const gameScreen = document.getElementById('game-screen')
