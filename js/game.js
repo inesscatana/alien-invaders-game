@@ -4,6 +4,9 @@ const ctx = canvas.getContext('2d')
 const scoreEl = document.getElementById('score')
 const livesEl = document.getElementById('lives')
 const restartButton = document.getElementById('restart-button')
+const startButton = document.getElementById('start-button')
+const coverScreen = document.getElementById('cover-screen')
+const gameScreen = document.getElementById('game-screen')
 
 canvas.width = 1024
 canvas.height = 576
@@ -530,7 +533,11 @@ function animate() {
 	frames++
 }
 
-animate()
+startButton.addEventListener('click', () => {
+	coverScreen.style.display = 'none'
+	gameScreen.style.display = 'block'
+	animate()
+})
 
 function handleKeyDown(key) {
 	if (game.over) return

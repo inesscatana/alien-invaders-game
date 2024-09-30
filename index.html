@@ -13,27 +13,31 @@
 		<link rel="stylesheet" href="css/styles.css" />
 	</head>
 	<body>
-		<!-- <div id="cover-screen">
-			<h1>Alien Invaders</h1>
-			<button id="start-button">Start Game</button>
-		</div> -->
+		<div id="cover-screen" class="screen">
+			<div class="screen-content">
+				<h1>Alien Invaders</h1>
+				<button id="start-button">Start Game</button>
+			</div>
+		</div>
 
 		<div id="game-screen">
 			<canvas id="game-canvas"></canvas>
 			<div id="score">Score: 0</div>
 			<div id="lives">
-				<span id="lives-text">Lives </span>
+				<span id="lives-text">Lives</span>
 				<img src="assets/images/spaceship.png" alt="Life" class="life" />
 				<img src="assets/images/spaceship.png" alt="Life" class="life" />
 				<img src="assets/images/spaceship.png" alt="Life" class="life" />
 			</div>
 		</div>
 
-		<div id="game-over-screen" style="display: none">
-			<h1>Game Over</h1>
-			<p id="final-score">Final Score: 0</p>
-			<p id="high-score">High Score: 0</p>
-			<button id="restart-button">Restart</button>
+		<div id="game-over-screen" class="screen" style="display: none">
+			<div class="screen-content">
+				<h1>Game Over</h1>
+				<p id="final-score">Final Score: 0</p>
+				<p id="high-score">High Score: 0</p>
+				<button id="restart-button">Restart</button>
+			</div>
 		</div>
 
 		<script type="module" src="js/game.js"></script>
