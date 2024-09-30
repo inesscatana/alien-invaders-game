@@ -24,6 +24,7 @@ const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
 const PROJECTILE_SPEED = -10
 const PLAYER_SCALE = 0.07
+const INVADER_SCALE = 0.07
 
 class Player {
 	constructor() {
@@ -40,7 +41,7 @@ class Player {
 
 	loadImage() {
 		const image = new Image()
-		image.src = '../assets/spaceship.png'
+		image.src = '../assets/images/spaceship.png'
 		image.onload = () => {
 			this.image = image
 			this.width = image.width * PLAYER_SCALE
@@ -172,12 +173,11 @@ class Invader {
 
 	loadImage() {
 		const image = new Image()
-		image.src = '../assets/alien1.png'
+		image.src = '../assets/images/alien1.png'
 		image.onload = () => {
-			const scale = 0.07
 			this.image = image
-			this.width = image.width * scale
-			this.height = image.height * scale
+			this.width = image.width * INVADER_SCALE
+			this.height = image.height * INVADER_SCALE
 			this.position = {
 				x: this.position.x,
 				y: this.position.y,
@@ -353,9 +353,17 @@ function handlePlayerMovement() {
 
 function updateLivesDisplay() {
 	const lifeImages = livesEl.querySelectorAll('.life')
+	const livesText = document.getElementById('lives-text')
+
 	lifeImages.forEach((life, index) => {
 		life.style.display = index < lives ? 'inline' : 'none'
 	})
+
+	if (lives <= 0) {
+		livesText.style.display = 'none'
+	} else {
+		livesText.style.display = 'inline'
+	}
 }
 
 function showGameOverScreen() {
@@ -589,10 +597,13 @@ function restartGame() {
 	game.active = true
 	updateLivesDisplay()
 
+	invaderProjectiles.length = 0
 	player.position = {
 		x: canvas.width / 2 - player.width / 2,
 		y: canvas.height - player.height - 10,
 	}
+	projectiles.length = 0
+	grids.length = 0
 
 	const gameOverScreen = document.getElementById('game-over-screen')
 	const gameScreen = document.getElementById('game-screen')

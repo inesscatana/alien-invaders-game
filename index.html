@@ -4,6 +4,12 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Alien Invaders</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap"
+			rel="stylesheet"
+		/>
 		<link rel="stylesheet" href="css/styles.css" />
 	</head>
 	<body>
@@ -16,9 +22,10 @@
 			<canvas id="game-canvas"></canvas>
 			<div id="score">Score: 0</div>
 			<div id="lives">
-				<img src="assets/spaceship.png" alt="Life" class="life" />
-				<img src="assets/spaceship.png" alt="Life" class="life" />
-				<img src="assets/spaceship.png" alt="Life" class="life" />
+				<span id="lives-text">Lives </span>
+				<img src="assets/images/spaceship.png" alt="Life" class="life" />
+				<img src="assets/images/spaceship.png" alt="Life" class="life" />
+				<img src="assets/images/spaceship.png" alt="Life" class="life" />
 			</div>
 		</div>
 
@@ -26,7 +33,7 @@
 			<h1>Game Over</h1>
 			<p id="final-score">Final Score: 0</p>
 			<p id="high-score">High Score: 0</p>
-			<button id="restart-button">Restart Game</button>
+			<button id="restart-button">Restart</button>
 		</div>
 
 		<script type="module" src="js/game.js"></script>
