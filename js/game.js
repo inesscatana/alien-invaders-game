@@ -8,8 +8,29 @@ const startButton = document.getElementById('start-button')
 const coverScreen = document.getElementById('cover-screen')
 const gameScreen = document.getElementById('game-screen')
 
-canvas.width = 1024
-canvas.height = 576
+// Aspect ratio 16:9
+const aspectRatio = 16 / 9
+
+// Function to resize canvas while keeping 16:9 aspect ratio
+function resizeCanvas() {
+	const windowWidth = window.innerWidth
+	const windowHeight = window.innerHeight
+
+	// Calculate canvas size based on window size while maintaining 16:9 ratio
+	if (windowWidth / windowHeight > aspectRatio) {
+		canvas.height = windowHeight
+		canvas.width = windowHeight * aspectRatio
+	} else {
+		canvas.width = windowWidth
+		canvas.height = windowWidth / aspectRatio
+	}
+
+	ctx.clearRect(0, 0, canvas.width, canvas.height) // Clear canvas to avoid artifacts
+}
+
+// Call resize function initially and on window resize
+window.addEventListener('resize', resizeCanvas)
+resizeCanvas() // Initial call to set up canvas
 
 const SHOOT_SOUND = new Audio('../assets/sounds/shoot.wav')
 SHOOT_SOUND.volume = 0.4
@@ -26,7 +47,7 @@ GAME_OVER_MUSIC.volume = 0.7
 const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
 const PROJECTILE_SPEED = -10
-const PLAYER_SCALE = 0.07
+const PLAYER_SCALE = 0.05
 const INVADER_SCALE = 0.07
 
 class Player {
@@ -51,7 +72,7 @@ class Player {
 			this.height = image.height * PLAYER_SCALE
 			this.position = {
 				x: canvas.width / 2 - this.width / 2,
-				y: canvas.height - this.height - 10,
+				y: canvas.height - this.height,
 			}
 		}
 	}
