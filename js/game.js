@@ -364,16 +364,13 @@ function handlePlayerMovement() {
 
 function updateLivesDisplay() {
 	const lifeImages = livesEl.querySelectorAll('.life')
-	const livesText = document.getElementById('lives-text')
-
 	lifeImages.forEach((life, index) => {
 		life.style.display = index < lives ? 'inline' : 'none'
 	})
 
 	if (lives <= 0) {
-		livesText.style.display = 'none'
-	} else {
-		livesText.style.display = 'inline'
+		game.over = true
+		showGameOverScreen()
 	}
 }
 
