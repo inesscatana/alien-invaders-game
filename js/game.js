@@ -413,9 +413,6 @@ function saveHighScoreToLocalStorage(score) {
 	const currentHighScore = localStorage.getItem('highScore') || 0
 	if (score > currentHighScore) {
 		localStorage.setItem('highScore', score)
-		console.log(`New high score saved: ${score}`)
-	} else {
-		console.log(`High score remains: ${currentHighScore}`)
 	}
 }
 
