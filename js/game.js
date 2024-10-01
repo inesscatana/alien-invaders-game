@@ -8,29 +8,16 @@ const startButton = document.getElementById('start-button')
 const coverScreen = document.getElementById('cover-screen')
 const gameScreen = document.getElementById('game-screen')
 
-// Aspect ratio 16:9
-const aspectRatio = 16 / 9
-
-// Function to resize canvas while keeping 16:9 aspect ratio
 function resizeCanvas() {
-	const windowWidth = window.innerWidth
-	const windowHeight = window.innerHeight
-
-	// Calculate canvas size based on window size while maintaining 16:9 ratio
-	if (windowWidth / windowHeight > aspectRatio) {
-		canvas.height = windowHeight
-		canvas.width = windowHeight * aspectRatio
-	} else {
-		canvas.width = windowWidth
-		canvas.height = windowWidth / aspectRatio
-	}
+	canvas.width = window.innerWidth
+	canvas.height = window.innerHeight
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height) // Clear canvas to avoid artifacts
 }
 
-// Call resize function initially and on window resize
+// Call the resize function initially and on window resize
 window.addEventListener('resize', resizeCanvas)
-resizeCanvas() // Initial call to set up canvas
+resizeCanvas() // Initial call to set up the canvas size
 
 const SHOOT_SOUND = new Audio('../assets/sounds/shoot.wav')
 SHOOT_SOUND.volume = 0.4
@@ -47,7 +34,7 @@ GAME_OVER_MUSIC.volume = 0.7
 const PLAYER_SPEED = 7
 const PLAYER_ROTATION_ANGLE = 0.15
 const PROJECTILE_SPEED = -10
-const PLAYER_SCALE = 0.05
+const PLAYER_SCALE = 0.07
 const INVADER_SCALE = 0.07
 
 class Player {
@@ -390,40 +377,50 @@ function updateLivesDisplay() {
 	}
 }
 
-async function getHighScore() {
-	try {
-		const response = await fetch('http://localhost:3000/highscore')
-		const data = await response.json()
-		return data.score
-	} catch (error) {
-		console.error('Erro ao obter o high score:', error)
-	}
-}
+// async function getHighScore() {
+// 	try {
+// 		const response = await fetch('http://localhost:3000/highscore')
+// 		const data = await response.json()
+// 		return data.score
+// 	} catch (error) {
+// 		console.error('Erro ao obter o high score:', error)
+// 	}
+// }
 
-async function saveHighScore(score) {
-	try {
-		await fetch('http://localhost:3000/highscore', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ score }),
-		})
-	} catch (error) {
-		console.error('Erro ao salvar o high score:', error)
-	}
-}
+// async function saveHighScore(score) {
+// 	try {
+// 		await fetch('http://localhost:3000/highscore', {
+// 			method: 'POST',
+// 			headers: {
+// 				'Content-Type': 'application/json',
+// 			},
+// 			body: JSON.stringify({ score }),
+// 		})
+// 	} catch (error) {
+// 		console.error('Erro ao salvar o high score:', error)
+// 	}
+// }
 
-async function checkHighScore() {
-	const highScore = await getHighScore()
-	if (score > highScore) {
-		await saveHighScore(score)
-		alert('Novo high score!')
+// async function checkHighScore() {
+// 	const highScore = await getHighScore()
+// 	if (score > highScore) {
+// 		await saveHighScore(score)
+// 		alert('Novo high score!')
+// 	}
+// }
+
+function saveHighScoreToLocalStorage(score) {
+	const currentHighScore = localStorage.getItem('highScore') || 0
+	if (score > currentHighScore) {
+		localStorage.setItem('highScore', score)
+		console.log(`New high score saved: ${score}`)
+	} else {
+		console.log(`High score remains: ${currentHighScore}`)
 	}
 }
 
 function showGameOverScreen() {
-	checkHighScore()
+	// checkHighScore()
 	const gameScreen = document.getElementById('game-screen')
 	const gameOverScreen = document.getElementById('game-over-screen')
 	const finalScoreEl = document.getElementById('final-score')
@@ -431,10 +428,14 @@ function showGameOverScreen() {
 
 	gameScreen.style.display = 'none'
 	gameOverScreen.style.display = 'block'
-	finalScoreEl.textContent = `Final Score: ${score}`
 
-	const highScore = localStorage.getItem('highScore') || 0
-	highScoreEl.textContent = `High Score: ${highScore}`
+	// Get current high score from localStorage
+	const currentHighScore = localStorage.getItem('highScore') || 0
+
+	finalScoreEl.textContent = `Final Score: ${score}`
+	highScoreEl.textContent = `High Score: ${currentHighScore}`
+
+	saveHighScoreToLocalStorage(score)
 
 	GAME_OVER_MUSIC.play()
 }

@@ -34,7 +34,7 @@ body {
 #lives {
 	position: absolute;
 	top: 10px;
-	font-size: 30px;
+	font-size: 2vw;
 	text-transform: uppercase;
 }
 
@@ -53,8 +53,8 @@ body {
 }
 
 .life {
-	width: 50px;
-	height: 50px;
+	width: 3vw;
+	height: 3vw;
 	margin-left: 5px;
 }
 
@@ -89,7 +89,7 @@ body {
 	padding: 10px 20px;
 	cursor: pointer;
 	font-family: 'Tiny5', sans-serif;
-	font-size: 40px;
+	font-size: 8vw;
 	text-transform: uppercase;
 	background-color: #34ff00;
 	color: black;
@@ -101,13 +101,13 @@ body {
 
 #game-over-screen h1,
 #cover-screen h1 {
-	font-size: 80px;
+	font-size: 12vw;
 	text-transform: uppercase;
 }
 
 #game-over-screen p {
 	margin: 10px 0;
-	font-size: 25px;
+	font-size: 4vw;
 }
 
 #game-over-screen button {
@@ -115,8 +115,53 @@ body {
 	padding: 10px 20px;
 	cursor: pointer;
 	font-family: 'Tiny5', sans-serif;
-	font-size: 30px;
+	font-size: 6vw;
 	text-transform: uppercase;
 	background-color: darkred;
 	color: white;
+}
+
+/* Media queries for small devices (phones) */
+@media (max-width: 768px) {
+	#cover-screen button {
+		font-size: 10vw;
+	}
+
+	#game-over-screen h1,
+	#cover-screen h1 {
+		font-size: 16vw;
+	}
+
+	#game-over-screen p {
+		font-size: 6vw;
+	}
+
+	#game-over-screen button {
+		font-size: 8vw;
+	}
+}
+
+/* Media queries for large screens */
+@media (min-width: 1024px) {
+	#cover-screen button {
+		font-size: 40px;
+	}
+
+	#game-over-screen h1,
+	#cover-screen h1 {
+		font-size: 80px;
+	}
+
+	#game-over-screen p {
+		font-size: 25px;
+	}
+
+	#game-over-screen button {
+		font-size: 30px;
+	}
+
+	.life {
+		width: 50px;
+		height: 50px;
+	}
 }
